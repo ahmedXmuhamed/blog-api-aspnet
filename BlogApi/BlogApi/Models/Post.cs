@@ -6,10 +6,10 @@ public class Post
     public string Title { get; set; }=string.Empty;
     public string Content { get; set; }=string.Empty;
     public int UserId { get; set; }
-    public User User { get; set; } = null;
+    public User? User { get; set; } 
     
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     
-   public List<Comment> Comments = new();
+   public List<Comment> Comments { get; set; } = new();
 }
