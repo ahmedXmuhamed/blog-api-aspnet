@@ -416,3 +416,18 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Build outputs
+bin/
+obj/
+
+# IDE files
+.idea/
+.vscode/
+
+# Database files
+*.db
+*.sqlite
+
+# User secrets
+secrets.json
