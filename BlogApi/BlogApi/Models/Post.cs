@@ -7,8 +7,9 @@ public class Post
     public string Content { get; set; }=string.Empty;
     public int UserId { get; set; }
     public User User { get; set; } = null;
+    
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     
-    List<Comment> Comments = new();
+   public List<Comment> Comments = new();
 }
