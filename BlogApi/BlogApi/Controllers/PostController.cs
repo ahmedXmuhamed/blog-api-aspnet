@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 
 namespace BlogApi.Controllers;
+using BlogApi.DTOs;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -18,21 +19,41 @@ public class PostController : ControllerBase
     // Post
     // Get all posts
     [HttpGet]
-    public ActionResult<List<Post>> GetAllPosts()
+    public ActionResult<List<PostResponseDto>> GetAllPosts()
     {
-        var posts = _context.Posts.ToList();
+        var posts = _context.Posts.Select(
+           p=>new PostResponseDto
+           {
+               Id = p.Id,
+               Title = p.Title,
+               Content = p.Content
+           }
+            ).ToList();
         return Ok(posts);
     }
     // Create post
     [HttpPost]
-    public IActionResult CreatePost(Post post)
+    public IActionResult CreatePost(CreatePostDto postDto)
     {
+        Post post = new Post()
+        {
+            Title = postDto.Title,
+            Content = postDto.Content,
+            UserId = postDto.UserId,
+            CreatedAt = DateTime.UtcNow
+        };
         _context.Posts.Add(post);
         _context.SaveChanges();
-        return Ok(post);
+        PostResponseDto response = new PostResponseDto()
+        {
+            Id = post.Id,
+            Title = post.Title,
+            Content = post.Content
+        };
+        return Ok(response);
     }
     [HttpPut("{id}")]
-    public IActionResult UpdatePost(int id, Post updatedPost)
+    public IActionResult UpdatePost(int id,UpdatePostDto updatedPostDto)
     {
         
         var post=_context.Posts.FirstOrDefault(p=>p.Id==id);
@@ -40,17 +61,32 @@ public class PostController : ControllerBase
         {
             return NotFound();
         }
-        post.Title = updatedPost.Title;
-        post.Content = updatedPost.Content;
+        
+        post.Title = updatedPostDto.Title;
+        post.Content = updatedPostDto.Content;
+        post.UpdatedAt = DateTime.UtcNow;
         _context.SaveChanges();
-        return Ok(post);
+        PostResponseDto response = new PostResponseDto()
+        {
+            Id = post.Id,
+            Title = post.Title,
+            Content = post.Content
+        };
+        return Ok(response);
     }
     
     //Get post by id
     [HttpGet("{id}")]
-    public ActionResult<Post> GetPostById(int id)
+    public ActionResult<PostResponseDto> GetPostById(int id)
     {
-        var post=_context.Posts.FirstOrDefault(p=>p.Id==id);
+        var post=_context.Posts.Where(p=>p.Id ==id).Select(
+            p=> new PostResponseDto()
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Content = p.Content
+            }
+            ).FirstOrDefault();
         if (post==null)
         {
             return NotFound();
